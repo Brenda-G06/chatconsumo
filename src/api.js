@@ -64,7 +64,27 @@ router.get("/salas", async (req, res) => {
     res.status(500).send({ msg: "Erro ao listar salas" });
   }
 });
+router.post("/sala/criar", async (req, res) => {
+  try {
+    const { nome, tipo } = req.body;
+    
+    // Verifica se o nome e tipo foram fornecidos
+    if (!nome || !tipo) {
+      return res.status(400).send({ msg: "Nome e tipo da sala são obrigatórios" });
+    }
 
+    if (await token.checkToken(req.headers.token, req.headers.iduser, req.headers.nick)) {
+      // Chama a função de criação de sala
+      const resp = await salaController.criarSala({ nome, tipo });
+      res.status(201).send(resp);
+    } else {
+      res.status(401).send({ msg: "Usuário não autorizado" });
+    }
+  } catch (err) {
+    console.error("Erro na rota /sala/criar:", err);
+    res.status(500).send({ msg: "Erro ao criar sala" });
+  }
+});
 // Rota para entrar em uma sala
 router.put("/sala/entrar", async (req, res) => {
   try {

@@ -85,21 +85,21 @@ exports.sairUser = async (idUser) => {
 };
 
 exports.criarSala = async (req, res) => {
-    try {
-        const { nome, tipo } = req.body;
+  try {
+      const { nome, tipo } = req.body;
 
-        if (!nome || !tipo) {
-            return res.status(400).json({ error: "Nome e tipo da sala são obrigatórios." });
-        }
+      if (!nome || !tipo) {
+          return res.status(400).json({ error: "Nome e tipo da sala são obrigatórios." });
+      }
 
-        const novaSala = await salaModel.criarSala({ nome, tipo });
+      const novaSala = await salaModel.criarSala({ nome, tipo });
 
-        return res.status(201).json({
-            msg: "Sala criada com sucesso.",
-            sala: novaSala,
-        });
-    } catch (error) {
-        console.error("Erro ao criar sala:", error);
-        return res.status(500).json({ error: "Erro ao criar sala." });
-    }
+      return res.status(201).json({
+          msg: "Sala criada com sucesso.",
+          sala: novaSala,
+      });
+  } catch (error) {
+      console.error("Erro ao criar sala:", error);
+      return res.status(500).json({ error: "Erro ao criar sala." });
+  }
 };

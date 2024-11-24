@@ -6,10 +6,10 @@ const db = mysql.createConnection({
     user: 'root',                      // Usuário do banco
     password: 'VdidvuVTtAsThnNATPaOBtokJSQXRXqG', // Senha do banco
     database: 'railway',               // Nome do banco de dados
-    port: 43479                        // Porta do banco de dados
-}).promise(); // Usa promessas para trabalhar com async/await
+    port: 43479                       
+}).promise(); 
 
-// Lista todas as salas disponíveis
+
 async function listarSalas() {
     try {
         const query = "SELECT * FROM salas";
@@ -21,7 +21,7 @@ async function listarSalas() {
     }
 }
 
-// Busca uma sala pelo ID
+
 async function buscarSala(idSala) {
     try {
         const query = "SELECT * FROM salas WHERE id = ?";
@@ -33,10 +33,10 @@ async function buscarSala(idSala) {
     }
 }
 
-// Atualiza mensagens em uma sala
+
 async function atualizarMensagens(idSala, mensagens) {
     try {
-        const mensagensString = JSON.stringify(mensagens); // Serializa mensagens em formato JSON
+        const mensagensString = JSON.stringify(mensagens); 
         const query = "UPDATE salas SET msgs = ? WHERE id = ?";
         const [result] = await db.execute(query, [mensagensString, idSala]);
         return result.affectedRows > 0;
@@ -46,12 +46,12 @@ async function atualizarMensagens(idSala, mensagens) {
     }
 }
 
-// Busca mensagens de uma sala a partir de um timestamp
+
 async function buscarMensagens(idSala, timestamp) {
     try {
         const sala = await buscarSala(idSala);
         if (sala && sala.msgs) {
-            const mensagens = JSON.parse(sala.msgs); // Desserializa mensagens do JSON armazenado
+            const mensagens = JSON.parse(sala.msgs); 
             return mensagens.filter((msg) => msg.timestamp >= timestamp);
         }
         return [];
@@ -61,7 +61,7 @@ async function buscarMensagens(idSala, timestamp) {
     }
 }
 
-// Retorna todas as salas (equivalente a sair de uma sala, conforme original)
+
 async function sairSala() {
     try {
         return await listarSalas();
@@ -71,7 +71,7 @@ async function sairSala() {
     }
 }
 
-// Remove um usuário pelo ID
+
 async function removerUsuario(idUser) {
     try {
         const query = "DELETE FROM usuarios WHERE id = ?";
@@ -86,7 +86,21 @@ async function removerUsuario(idUser) {
         throw new Error("Erro ao remover usuário.");
     }
 }
+async function criarSala({ nome, tipo }) {
+  try {
+    
+      const query = "INSERT INTO salas (nome, tipo) VALUES (?, ?)";
+      
+   
+      const [result] = await db.execute(query, [nome, tipo]);
 
+      
+      return { id: result.insertId, nome, tipo };
+  } catch (error) {
+      console.error("Erro ao criar sala:", error);
+      throw new Error("Erro ao criar sala.");
+  }
+}
 module.exports = {
     listarSalas,
     buscarSala,
@@ -94,4 +108,5 @@ module.exports = {
     buscarMensagens,
     sairSala,
     removerUsuario,
+    criarSala,
 };
